@@ -1,17 +1,20 @@
 import Router from "./router.js";
+import home from "./home.js";
+import about from "./about.js";
+import contact from "./contact.js";
 
 const routes = [
   {
     path: "/",
-    template: `<h1>🏠 Home</h1>`,
+    template: home,
   },
   {
     path: "/about",
-    template: `<h1>👩🏻‍💻 Sobre mi</h1>`,
+    template: about,
   },
   {
     path: "/contact",
-    template: `<h1>📱 Contacto</h1>`,
+    template: contact,
   },
   {
     path: "/error",

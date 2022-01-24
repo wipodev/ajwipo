@@ -1,3 +1,5 @@
+import Rigup from "./rigup.js";
+
 export default class Router {
   constructor(routes) {
     this.routes = routes;
@@ -25,7 +27,8 @@ export default class Router {
   loadPage(route) {
     const { path, template } = route;
     const $CONTAINER = document.querySelector("#content");
-    $CONTAINER.innerHTML = template;
+    Rigup(template);
+    $CONTAINER.innerHTML = `<${template.name}/>`;
     window.history.pushState({}, "done", "#" + path);
   }
 }
