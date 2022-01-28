@@ -1,27 +1,24 @@
-import Router from "./router.js";
-import home from "./home.js";
-import about from "./about.js";
-import contact from "./contact.js";
+import ajrouter from "../lib/ajrouter.js";
 
 const routes = [
   {
     path: "/",
-    template: home,
+    template: `<aj-home/>`,
   },
   {
     path: "/about",
-    template: about,
+    template: `<aj-about/>`,
   },
   {
     path: "/contact",
-    template: contact,
+    template: `<aj-contact/>`,
   },
   {
     path: "/error",
-    template: `<h1> Error</h1>`,
+    template: `<aj-error/>`,
   },
 ];
 
 export default () => {
-  new Router(routes);
+  new ajrouter(routes);
 };

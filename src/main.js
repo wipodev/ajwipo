@@ -1,10 +1,12 @@
-import ajwipo from "./lib/ajwipo";
-import routes from "./router/index";
+import ajwipo from "./lib/ajwipo.js";
+import "./app.js";
 
-new ajwipo({
-  mount: "#content",
-  routes,
-});
+const AJwipo = () => {
+  new ajwipo({
+    view: "<aj-app>",
+    use: "router",
+  });
+};
 
-//document.addEventListener("DOMContentLoaded", ajwipo);
-//window.addEventListener("hashchange", ajwipo);
+document.addEventListener("DOMContentLoaded", AJwipo);
+window.addEventListener("hashchange", AJwipo);

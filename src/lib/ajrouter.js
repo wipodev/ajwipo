@@ -19,6 +19,17 @@ export default class Router {
         this.loadPage(route);
         break;
       }
+      if (route.path === "/error" && hash === "") {
+        this.loadPage(route);
+        break;
+      }
     }
+  }
+
+  loadPage(route) {
+    const { path, template } = route;
+    const $CONTAINER = document.querySelector("aj-router");
+    $CONTAINER.innerHTML = template;
+    window.history.pushState({}, "done", "#" + path);
   }
 }
