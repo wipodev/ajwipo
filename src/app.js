@@ -5,7 +5,9 @@ import "./views/contact.js";
 import "./views/error.js";
 
 ajwipo.component("aj-app", {
-  template: `
+  template:
+    /*html*/
+    `
     <a href="#/">home</a>
     <a href="#/about">about</a>
     <a href="#/contact">contact</a>

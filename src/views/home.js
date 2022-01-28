@@ -2,11 +2,15 @@ import ajwipo from "../lib/ajwipo.js";
 import "../components/title.js";
 
 ajwipo.component("aj-home", {
-  template: `
+  template:
+    /*html*/
+    `
     <aj-title></aj-title>
     <p>estas en la pagina de Inicio</p>
   `,
-  style: `
+  style:
+    /*css*/
+    `
     p{
       color: blue;
     }
