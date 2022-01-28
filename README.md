@@ -8,7 +8,9 @@
 
 <img width="200" height="auto" align="right" src="https://github.com/AJ-Wi/AJ-Wi/blob/main/assets/logo.png">
 
-Mi portafolio personal
+Pequeña librería creada al estilo de Vue.js con WebComponent e incorporando un router todo en JavaScript.
+
+Esto lo realicé como un reto personal y a la vez que sea funcional para otros proyectos que estoy realizando.
 
 Tengo un canal en <a href="https://www.youtube.com/channel/UCMzpttcB6zhVQzYuzhggnQA" target="_blank" rel="noopener"> _**YouTube**_</a> donde enseño sobre el maravilloso mundo de la _web_.
 
