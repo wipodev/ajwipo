@@ -1,4 +1,3 @@
-import ajwipo from "./lib/ajwipo.js";
 import "./views/home.js";
 import "./views/about.js";
 import "./views/contact.js";

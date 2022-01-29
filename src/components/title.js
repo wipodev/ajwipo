@@ -1,5 +1,3 @@
-import ajwipo from "../lib/ajwipo.js";
-
 ajwipo.component("aj-title", {
   template:
     /*html*/

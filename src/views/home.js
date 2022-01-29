@@ -1,4 +1,3 @@
-import ajwipo from "../lib/ajwipo.js";
 import "../components/title.js";
 
 ajwipo.component("aj-home", {

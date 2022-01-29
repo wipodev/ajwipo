@@ -37,4 +37,11 @@ export default class ajwipo {
     }
   }
 }
+
+(() => {
+  if (typeof window.ajwipo === "undefined") {
+    window.ajwipo = ajwipo;
+  }
+})();
+
 ajwipo.component("aj-router", {});
