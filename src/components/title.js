@@ -1,4 +1,4 @@
-ajwipo.component("aj-title", {
+AJWipo.component("aj-title", {
   template:
     /*html*/
     `

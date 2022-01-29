@@ -1,6 +1,6 @@
 import "../components/title.js";
 
-ajwipo.component("aj-about", {
+AJWipo.component("aj-about", {
   template:
     /*html*/
     `
