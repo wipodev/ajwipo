@@ -1,3 +1,16 @@
+((w, d) => {
+  "use strict";
+
+  const init = () => {
+    const ajwipo = {};
+    return ajwipo;
+  };
+
+  if (typeof window.ajwipo === "undefined") {
+    window.ajwipo = init();
+  }
+})(window, document);
+
 import routes from "../router/index.js";
 
 export default class ajwipo {
