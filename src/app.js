@@ -1,10 +1,4 @@
-import ajwipo from "./lib/ajwipo.js";
-import "./views/home.js";
-import "./views/about.js";
-import "./views/contact.js";
-import "./views/error.js";
-
-ajwipo.component("aj-app", {
+AJWipo.component("aj-app", {
   template:
     /*html*/
     `

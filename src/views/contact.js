@@ -1,7 +1,6 @@
-import ajwipo from "../lib/ajwipo.js";
 import "../components/title.js";
 
-ajwipo.component("aj-contact", {
+AJWipo.component("aj-contact", {
   template:
     /*html*/
     `
