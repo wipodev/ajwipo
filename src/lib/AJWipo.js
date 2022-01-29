@@ -1,20 +1,37 @@
-/*((w, d) => {
+((w, d) => {
   "use strict";
 
   const init = () => {
-    let elemento = null,
-      marco = null,
-      rutas = {},
-      controladores = {},
-      controlador;
+    let element = null;
+    let container = null;
+    let router;
+    let controladores = {};
+    let controlador;
 
-    const ajwipo = {
-      getID(id) {
-        elemento = d.querySelector(id);
+    const AJWipo = {
+      $(e) {
+        element = d.querySelector(e);
         return this;
       },
-      noSubmit() {
-        elemento.addEventListener(
+      mount(e) {
+        this.$(e);
+        container = element;
+        return this;
+      },
+      render(view) {
+        container.innerHTML = `<${view}/>`;
+        return this;
+      },
+      use(lib) {
+        router = lib;
+        lib();
+        return this;
+      },
+      actualizar() {
+        router();
+      },
+      preventSubmit() {
+        element.addEventListener(
           "submit",
           (e) => {
             e.preventDefault();
@@ -23,104 +40,34 @@
         );
         return this;
       },
-      enrutar() {
-        marco = elemento;
-        return this;
-      },
-      ruta(ruta, plantilla, controlador, carga) {
-        rutas[ruta] = {
-          plantilla,
-          controlador,
-          carga,
-        };
-        return this;
-      },
-      manejadorRutas() {
-        let hash = w.location.hash.substring(1) || "/";
-        let destinos = rutas[hash];
-        let xhr = new XMLHttpRequest();
+      component(name, { template, style }) {
+        if (customElements.get(name) === undefined) {
+          customElements.define(
+            name,
+            class extends HTMLElement {
+              constructor() {
+                super();
+              }
 
-        if (destino && destinos.plantilla) {
-          xhr.addEventListener(
-            "load",
-            () => {
-              marco.innerHTML = this.responseText;
-            },
-            false
+              connectedCallback() {
+                if (name !== "aj-router") {
+                  this.innerHTML = `<style>${style}</style>`;
+                  this.innerHTML += template;
+                }
+              }
+            }
           );
-          xhr.open("get", detinos.plantilla, true);
-          xhr.send(null);
-        } else {
-          w.location.hash = "#/";
         }
       },
     };
-    return ajwipo;
+    return AJWipo;
   };
 
-  if (typeof w.ajwipo === "undefined") {
-    w.ajwipo = init();
-    w.addEventListener("load", ajwipo.manejadorRutas, false);
-    w.addEventListener("hashchange", ajwipo.manejadorRutas, false);
-  } else {
-    console.log("the bookstore is calling again");
-  }
-})(window, document);*/
-
-export default class AJWipo {
-  constructor(mount = "#app") {
-    this.mount = mount;
-  }
-
-  render(view) {
-    let { mount } = this;
-    let page = document.querySelector(mount);
-    page.innerHTML = `<${view}/>`;
-    return this;
-  }
-
-  use(lib) {
-    lib();
-    return this;
-  }
-
-  preventSubmit() {
-    this.element.addEventListener(
-      "submit",
-      (e) => {
-        e.preventDefault();
-      },
-      false
-    );
-  }
-
-  static component(name, { template, style }) {
-    if (customElements.get(name) === undefined) {
-      customElements.define(
-        name,
-        class extends HTMLElement {
-          constructor() {
-            super();
-          }
-
-          connectedCallback() {
-            if (name !== "aj-router") {
-              this.innerHTML = `<style>${style}</style>`;
-              this.innerHTML += template;
-            }
-          }
-        }
-      );
-    }
-  }
-}
-
-((w) => {
-  "use strict";
-
   if (typeof w.AJWipo === "undefined") {
-    w.AJWipo = w.AJ = AJWipo;
+    w.AJWipo = w.AJ = init();
+    w.addEventListener("load", AJ.actualizar, false);
+    w.addEventListener("hashchange", AJ.actualizar, false);
   } else {
     console.log("the bookstore is calling again");
   }
-})(window);
+})(window, document);
