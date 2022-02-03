@@ -25,6 +25,14 @@ export default class AJWipo {
     );
   }
 
+  static getElement(selector, context = document) {
+    return context.querySelector(selector);
+  }
+
+  static getElementAll(selector, context = document) {
+    return context.querySelectorAll(selector);
+  }
+
   static component(name, { template, style }) {
     if (customElements.get(name) === undefined) {
       customElements.define(
@@ -36,8 +44,15 @@ export default class AJWipo {
 
           connectedCallback() {
             if (name !== "aj-router") {
-              this.innerHTML = `<style>${style}</style>`;
+              if (style !== undefined) {
+                this.innerHTML = `<style>${style}</style>`;
+              }
               this.innerHTML += template;
+              if (script !== undefined) {
+                if (script.data !== undefined) script.data();
+                if (script.methods !== undefined) script.methods();
+                if (script.created !== undefined) script.created();
+              }
             }
           }
         }
