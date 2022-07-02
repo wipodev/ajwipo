@@ -3,8 +3,11 @@ AJWipo.component("aj-title", {
     /*html*/
     `
     <h1>Hola soy un componente</h1>
-    <h2>pepe</h2>
+    <h2>{{title}}</h2>
   `,
+  script: {
+    props: ["title"],
+  },
   style:
     /*css*/
     `
