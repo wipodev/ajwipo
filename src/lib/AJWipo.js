@@ -72,9 +72,7 @@ export default class AJWipo {
             if (name !== "aj-router") {
               let token = "aj-" + AJWipo.getToken(name);
               if (style !== undefined) {
-                document.querySelector(
-                  "head"
-                ).innerHTML += `<style data-${token}>${style}</style>`;
+                AJWipo.injectStyle(token, style);
               }
               if (!this.isObjEmpty(this.slots)) {
                 let tmp = template;
@@ -118,6 +116,23 @@ export default class AJWipo {
       seed = char % 1;
     }
     return token;
+  }
+
+  static injectStyle(token, style) {
+    let head = document.querySelector("head");
+    let exist = false;
+
+    head.childNodes.forEach((node) => {
+      if (node.tagName === "STYLE") {
+        if (node.dataset.token === token) {
+          exist = true;
+        }
+      }
+    });
+
+    if (!exist) {
+      head.innerHTML += `<style data-token=${token}>${style}</style>`;
+    }
   }
 }
 
