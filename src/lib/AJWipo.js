@@ -1,8 +1,15 @@
+/**
+ * @author       Wladimir Perez <ajwipo@gmail.com>
+ * @copyright    2022-present AJWipo.
+ * @license      @link https://opensource.org/licenses/MIT|MIT License
+ */
+
 export default class AJWipo {
   constructor(mount = "#app") {
     this.mount = mount;
   }
 
+  // load the view on the page
   render(view) {
     let { mount } = this;
     let page = document.querySelector(mount);
@@ -10,6 +17,7 @@ export default class AJWipo {
     return this;
   }
 
+  // run additional libraries, example router
   use(lib) {
     lib();
     return this;
@@ -33,6 +41,7 @@ export default class AJWipo {
     return context.querySelectorAll(selector);
   }
 
+  // tests to create a store
   static createStore(store) {
     if (typeof window.Store === "undefined") {
       window.Store = store;
@@ -41,14 +50,19 @@ export default class AJWipo {
     }
   }
 
+  // function that creates the webComponents
   static component(name, { template, script, style }) {
+    // I check if the component is already created
     if (customElements.get(name) === undefined) {
+      // define component
       customElements.define(
+        //component name
         name,
+        //component class
         class extends HTMLElement {
           constructor() {
             super();
-            this.slots = {};
+            this.props = {};
           }
 
           static get observedAttributes() {
@@ -58,7 +72,7 @@ export default class AJWipo {
           }
 
           attributeChangedCallback(name, oldValue, newValue) {
-            this.slots[name] = newValue;
+            this.props[name] = newValue;
           }
 
           isObjEmpty(obj) {
@@ -71,28 +85,87 @@ export default class AJWipo {
           connectedCallback() {
             if (name !== "aj-router") {
               let token = "aj-" + AJWipo.getToken(name);
-              if (style !== undefined) {
-                AJWipo.injectStyle(token, style);
-              }
-              if (!this.isObjEmpty(this.slots)) {
-                let tmp = template;
-                for (const slot in this.slots) {
-                  let regexp = new RegExp(
-                    //`<slot name="${slot}">([A-Z0-9 \-_\.,])+<\/slot>`,
-                    `{{${slot}}}`,
-                    "gi"
-                  );
-                  tmp = tmp.replace(regexp, this.slots[slot]);
-                }
-                this.innerHTML += tmp;
-              } else {
-                this.innerHTML += template;
-              }
+              this.injectStyle(token);
+              this.addTemplate();
+
               if (script !== undefined) {
                 if (script.data !== undefined) script.data();
                 if (script.methods !== undefined) script.methods();
                 if (script.created !== undefined) script.created();
               }
+            }
+          }
+          /***********************  falta agregar el token como clase en el html************************ */
+          addTemplate() {
+            let tmp = template;
+
+            if (!this.isObjEmpty(this.props)) {
+              tmp = this.replaceProps(tmp);
+            }
+
+            if (this.innerHTML !== "") {
+              tmp = tmp.replace(this.regExp("slot"), this.innerHTML);
+            } else {
+              tmp = this.replaceSlot(tmp);
+            }
+
+            this.innerHTML = tmp;
+          }
+
+          replaceProps(tmp) {
+            for (const prop in this.props) {
+              tmp = tmp.replace(this.regExp("prop", prop), this.props[prop]);
+              this.removeAttribute(prop);
+            }
+            return tmp;
+          }
+
+          replaceSlot(tmp) {
+            let start = tmp.search("<slot>") + 6;
+            let end = tmp.search("</slot>");
+            return tmp.replace(this.regExp("slot"), tmp.substring(start, end));
+          }
+
+          injectStyle(token) {
+            if (style !== undefined) {
+              let head = document.querySelector("head");
+              let exist = false;
+
+              head.childNodes.forEach((node) => {
+                if (node.tagName === "STYLE") {
+                  if (node.dataset.token === token) {
+                    exist = true;
+                  }
+                }
+              });
+
+              if (!exist) {
+                //style = this.applyStyleScope(token, style);
+                head.innerHTML += `<style data-token=${token}>${style}</style>`;
+              }
+            }
+          }
+
+          applyStyleScope(token) {
+            let styleLoaded = new CSSStyleSheet();
+            let result = "";
+
+            styleLoaded.replaceSync(style);
+
+            for (const rule of styleLoaded.cssRules) {
+              rule.selectorText = rule.selectorText + "." + token;
+              result += rule.cssText;
+            }
+            return result.replace(/ /g, "");
+          }
+
+          regExp(exp, prop = "") {
+            if (exp === "prop") {
+              return new RegExp(`{{${prop}}}`, "gi");
+            } else if (exp === "slot") {
+              return new RegExp(`<slot>([A-Z0-9 \-_\.,])+<\/slot>`, "i");
+            } else {
+              return new RegExp(exp, "i");
             }
           }
         }
@@ -116,37 +189,6 @@ export default class AJWipo {
       seed = char % 1;
     }
     return token;
-  }
-
-  static applyStyleScope(token, style) {
-    let styleLoaded = new CSSStyleSheet();
-    let result = "";
-
-    styleLoaded.replaceSync(style);
-
-    for (const rule of styleLoaded.cssRules) {
-      rule.selectorText = rule.selectorText + "." + token;
-      result += rule.cssText;
-    }
-    return result.replace(/ /g, "");
-  }
-
-  static injectStyle(token, style) {
-    let head = document.querySelector("head");
-    let exist = false;
-
-    head.childNodes.forEach((node) => {
-      if (node.tagName === "STYLE") {
-        if (node.dataset.token === token) {
-          exist = true;
-        }
-      }
-    });
-
-    if (!exist) {
-      //style = AJWipo.applyStyleScope(token, style);
-      head.innerHTML += `<style data-token=${token}>${style}</style>`;
-    }
   }
 }
 

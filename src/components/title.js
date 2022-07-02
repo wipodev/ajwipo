@@ -2,7 +2,7 @@ AJWipo.component("aj-title", {
   template:
     /*html*/
     `
-    <h1>Hola soy un componente</h1>
+    <h1><slot>prueba de slot</slot></h1>
     <h2>{{title}}</h2>
   `,
   script: {
