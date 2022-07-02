@@ -33,21 +33,55 @@ export default class AJWipo {
     return context.querySelectorAll(selector);
   }
 
-  static component(name, { template, style }) {
+  static component(name, { template, script, style }) {
     if (customElements.get(name) === undefined) {
       customElements.define(
         name,
         class extends HTMLElement {
           constructor() {
             super();
+            this.slots = {};
+          }
+
+          static get observedAttributes() {
+            if (script !== undefined) {
+              if (script.props !== undefined) return script.props;
+            }
+          }
+
+          attributeChangedCallback(name, oldValue, newValue) {
+            this.slots[name] = newValue;
+          }
+
+          isObjEmpty(obj) {
+            for (var prop in obj) {
+              if (obj.hasOwnProperty(prop)) return false;
+            }
+            return true;
           }
 
           connectedCallback() {
             if (name !== "aj-router") {
+              let token = "aj-" + AJWipo.getToken(name);
               if (style !== undefined) {
-                this.innerHTML = `<style>${style}</style>`;
+                document.querySelector(
+                  "head"
+                ).innerHTML += `<style data-${token}>${style}</style>`;
               }
-              this.innerHTML += template;
+              if (!this.isObjEmpty(this.slots)) {
+                let tmp = template;
+                for (const slot in this.slots) {
+                  let regexp = new RegExp(
+                    //`<slot name="${slot}">([A-Z0-9 \-_\.,])+<\/slot>`,
+                    `{{${slot}}}`,
+                    "gi"
+                  );
+                  tmp = tmp.replace(regexp, this.slots[slot]);
+                }
+                this.innerHTML += tmp;
+              } else {
+                this.innerHTML += template;
+              }
               if (script !== undefined) {
                 if (script.data !== undefined) script.data();
                 if (script.methods !== undefined) script.methods();
@@ -58,6 +92,24 @@ export default class AJWipo {
         }
       );
     }
+  }
+
+  static getToken(data) {
+    let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    let token = "";
+    let seed = 0;
+
+    for (let i = 0; i < data.length; i++) {
+      seed += data.charCodeAt(i);
+    }
+    seed = parseFloat("0." + seed);
+
+    for (let i = 0; i < 8; i++) {
+      let char = seed * chars.length;
+      token += chars[Math.floor(char)];
+      seed = char % 1;
+    }
+    return token;
   }
 }
 
