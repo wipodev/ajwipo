@@ -118,6 +118,19 @@ export default class AJWipo {
     return token;
   }
 
+  static applyStyleScope(token, style) {
+    let styleLoaded = new CSSStyleSheet();
+    let result = "";
+
+    styleLoaded.replaceSync(style);
+
+    for (const rule of styleLoaded.cssRules) {
+      rule.selectorText = rule.selectorText + "." + token;
+      result += rule.cssText;
+    }
+    return result.replace(/ /g, "");
+  }
+
   static injectStyle(token, style) {
     let head = document.querySelector("head");
     let exist = false;
@@ -131,6 +144,7 @@ export default class AJWipo {
     });
 
     if (!exist) {
+      //style = AJWipo.applyStyleScope(token, style);
       head.innerHTML += `<style data-token=${token}>${style}</style>`;
     }
   }
