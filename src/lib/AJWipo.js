@@ -33,6 +33,14 @@ export default class AJWipo {
     return context.querySelectorAll(selector);
   }
 
+  static createStore(store) {
+    if (typeof window.Store === "undefined") {
+      window.Store = store;
+    } else {
+      console.log("the store is being called again");
+    }
+  }
+
   static component(name, { template, script, style }) {
     if (customElements.get(name) === undefined) {
       customElements.define(
