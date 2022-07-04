@@ -205,9 +205,22 @@ export default class AJWipo {
           applyStyleScopeHTML(tmp, token) {
             let fragment = document.createRange().createContextualFragment(tmp);
 
+            /**
+             * Set class to element
+             * @param {Element} node
+             * @returns {void}
+             */
+            const setClass = (node) => {
+              node.classList.add(token);
+              if (node.childElementCount) {
+                for (let i = 0; i < node.children.length; i++) {
+                  setClass(node.children[i]);
+                }
+              }
+            };
             for (let i = 0; i < fragment.children.length; i++) {
               if (fragment.children[i].tagName !== "AJ-ROUTER") {
-                fragment.children[i].classList.add(token);
+                setClass(fragment.children[i]);
               }
             }
             return fragment;
@@ -246,10 +259,24 @@ export default class AJWipo {
 
             for (const rule of stylesheet.cssRules) {
               // @ts-ignore
-              rule.selectorText = rule.selectorText + "." + token;
+              let st = rule.selectorText.split(/[,\s]/);
+              for (let i = 0; i < st.length; i++) {
+                if (st[i] !== "") {
+                  st[i] =
+                    st[i].substring(0, 1) +
+                    st[i].substring(1).replace(/[.]/, "." + token + ".");
+                  if (st[i].search("." + token + ".") === -1) {
+                    st[i] += "." + token;
+                  }
+                } else {
+                  st[i] = ",";
+                }
+              }
+              // @ts-ignore
+              rule.selectorText = st.join(" ");
               result += rule.cssText;
             }
-            return result.replace(/ /g, "");
+            return result;
           }
 
           /**
