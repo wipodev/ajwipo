@@ -5,7 +5,7 @@ AJWipo.component("aj-about", {
     /*html*/
     `
     <aj-title title="titulo desde about"></aj-title>
-    <p>estas en la pagina aserca de mi</p>
+    <p>estas en la pagina acerca de mi</p>
   `,
   style:
     /*css*/

@@ -259,24 +259,49 @@ export default class AJWipo {
 
             for (const rule of stylesheet.cssRules) {
               // @ts-ignore
-              let st = rule.selectorText.split(/[,\s]/);
-              for (let i = 0; i < st.length; i++) {
-                if (st[i] !== "") {
-                  st[i] =
-                    st[i].substring(0, 1) +
-                    st[i].substring(1).replace(/[.]/, "." + token + ".");
-                  if (st[i].search("." + token + ".") === -1) {
-                    st[i] += "." + token;
+              if (!rule.selectorText) {
+                if (rule.cssText.substring(0, 4) !== "@key") {
+                  // @ts-ignore
+                  for (const subRule of rule.cssRules) {
+                    this.editRule(subRule, token);
                   }
-                } else {
-                  st[i] = ",";
                 }
+              } else {
+                this.editRule(rule, token);
               }
-              // @ts-ignore
-              rule.selectorText = st.join(" ");
               result += rule.cssText;
             }
             return result;
+          }
+
+          /**
+           * @param {CSSRule} rule CSS rule
+           * @param {string} token token of the component
+           * @returns {void}
+           */
+          editRule(rule, token) {
+            const p = ".:>";
+            // @ts-ignore
+            let selector = rule.selectorText.split(/[,\s]/);
+            for (let i = 0; i < selector.length; i++) {
+              if (selector[i] !== "") {
+                for (let j = 0; j < p.length; j++) {
+                  selector[i] =
+                    selector[i].substring(0, 1) +
+                    selector[i].substring(1).replace(p[j], `.${token}${p[j]}`);
+                }
+                if (
+                  selector[i].search(`.${token}`) === -1 &&
+                  selector[i].search(`[)]`) === -1
+                ) {
+                  selector[i] += `.${token}`;
+                }
+              } else {
+                selector[i] = ",";
+              }
+              // @ts-ignore
+              rule.selectorText = selector.join(" ");
+            }
           }
 
           /**
