@@ -7,4 +7,11 @@ AJWipo.component("aj-app", {
     <a href="#/contact">contact</a>
     <aj-router/>
   `,
+  style:
+    /*css*/
+    `
+  aj-app a {
+    color: red;
+  }
+  `,
 });

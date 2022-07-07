@@ -204,26 +204,34 @@ export default class AJWipo {
            */
           applyStyleScopeHTML(tmp, token) {
             let fragment = document.createRange().createContextualFragment(tmp);
+            this.classList.add(token);
+            console.log(this.classList);
 
-            /**
-             * Set class to element
-             * @param {Element} node
-             * @returns {void}
-             */
-            const setClass = (node) => {
-              node.classList.add(token);
-              if (node.childElementCount) {
-                for (let i = 0; i < node.children.length; i++) {
-                  setClass(node.children[i]);
-                }
-              }
-            };
             for (let i = 0; i < fragment.children.length; i++) {
-              if (fragment.children[i].tagName !== "AJ-ROUTER") {
-                setClass(fragment.children[i]);
+              if (
+                fragment.children[i].tagName !== "AJ-ROUTER" &&
+                fragment.children[i].tagName !== ":root" &&
+                fragment.children[i].tagName.search("-") === -1
+              ) {
+                this.setClass(fragment.children[i], token);
               }
             }
             return fragment;
+          }
+
+          /**
+           * Set class to element
+           * @param {Element} node element to set the class
+           * @param {string} token token of the component
+           * @returns {void}
+           */
+          setClass(node, token) {
+            node.classList.add(token);
+            if (node.childElementCount) {
+              for (let i = 0; i < node.children.length; i++) {
+                this.setClass(node.children[i], token);
+              }
+            }
           }
 
           /**
@@ -267,7 +275,10 @@ export default class AJWipo {
                   }
                 }
               } else {
-                this.editRule(rule, token);
+                // @ts-ignore
+                if (rule.selectorText !== ":root") {
+                  this.editRule(rule, token);
+                }
               }
               result += rule.cssText;
             }
@@ -292,7 +303,7 @@ export default class AJWipo {
                 }
                 if (
                   selector[i].search(`.${token}`) === -1 &&
-                  selector[i].search(`[)]`) === -1
+                  selector[i].search(`[)]`) === -1 && selector[i].search(`[>]`) === -1
                 ) {
                   selector[i] += `.${token}`;
                 }
@@ -344,7 +355,7 @@ export default class AJWipo {
     for (let i = 0; i < 8; i++) {
       let char = seed * chars.length;
       token += chars[Math.floor(char)];
-      seed = char % 1;
+      seed = char % 1 + 0.001;
     }
     return token;
   }
