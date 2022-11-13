@@ -22,7 +22,7 @@ export default class AJRouter {
   }
 
   loadView(view) {
-    AJWipo.component("aj-router", {});
+    AJwipo.component("aj-router", {});
     const { name, template } = view;
     const $CONTAINER = document.querySelector("aj-router");
     template();
